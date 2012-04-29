@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IOCPStudy", "IOCPStudy\IOCPStudy.vcxproj", "{5F76CB90-D35D-47CB-A214-A8C075AB4FDE}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AcceptEx", "AcceptEx\AcceptEx.vcxproj", "{8437EAB1-92FF-4B05-A914-23959DBBF274}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IocpClient", "IocpClient\IocpClient.vcxproj", "{E9ED7DEE-F702-4848-B263-523B367CA535}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5F76CB90-D35D-47CB-A214-A8C075AB4FDE}.Debug|Win32.ActiveCfg = Debug|Win32
+		{5F76CB90-D35D-47CB-A214-A8C075AB4FDE}.Debug|Win32.Build.0 = Debug|Win32
+		{5F76CB90-D35D-47CB-A214-A8C075AB4FDE}.Release|Win32.ActiveCfg = Release|Win32
+		{5F76CB90-D35D-47CB-A214-A8C075AB4FDE}.Release|Win32.Build.0 = Release|Win32
+		{8437EAB1-92FF-4B05-A914-23959DBBF274}.Debug|Win32.ActiveCfg = Debug|Win32
+		{8437EAB1-92FF-4B05-A914-23959DBBF274}.Debug|Win32.Build.0 = Debug|Win32
+		{8437EAB1-92FF-4B05-A914-23959DBBF274}.Release|Win32.ActiveCfg = Release|Win32
+		{8437EAB1-92FF-4B05-A914-23959DBBF274}.Release|Win32.Build.0 = Release|Win32
+		{E9ED7DEE-F702-4848-B263-523B367CA535}.Debug|Win32.ActiveCfg = Debug|Win32
+		{E9ED7DEE-F702-4848-B263-523B367CA535}.Debug|Win32.Build.0 = Debug|Win32
+		{E9ED7DEE-F702-4848-B263-523B367CA535}.Release|Win32.ActiveCfg = Release|Win32
+		{E9ED7DEE-F702-4848-B263-523B367CA535}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
