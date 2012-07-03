@@ -16,7 +16,7 @@ enum e_ActionType{
 };
 
 enum {
-	MAX_READ_BUFF_LEN = 2048,
+	MAX_READ_BUFF_LEN = 2048,	///<	每次WSARecv最大的数量
 };
 
 class IocpSocket;
@@ -71,12 +71,15 @@ public:
 protected:
 	IocpOverlapped m_oReadOverlapped;
 	IocpOverlapped m_oWriteOverlapped;
+	IocpOverlapped m_oAcceptOverlapped;
 
 	SOCKET m_nSocket;
 
 	// Read buffer
 	char m_szBuff[ MAX_READ_BUFF_LEN +1 ];
 	WSABUF m_wsaBuf;
+
+	//char m_szAcceptBuff[1024];
 
 	// Write buffer
 	CSendBuffer m_oSendBuffer;
@@ -109,7 +112,6 @@ public:
 	virtual bool DataReceived( void * pvData, unsigned nLen );
 	virtual bool OnConnect();
 
-	virtual bool OnConnectFailed();
 	virtual bool DataWritted( );
 
 	virtual bool OnErrorHappened( );

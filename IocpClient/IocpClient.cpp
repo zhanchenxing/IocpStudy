@@ -16,6 +16,7 @@
 
 #include <iostream>
 #include <string>
+#include <assert.h>
 
 #include "IocpBase.h"
 #include "SendBuffer.h"
@@ -40,6 +41,27 @@ BOOL WINAPI HandlerRoutine( DWORD CtrlType )
 }
 
 
+class EchoClient : public IocpClientSocket
+{
+public:
+	virtual bool OnConnect(){
+		printf("%p connected!\n", this);
+		char buff[8192]={0};
+		bool bWrite = WriteData( buff, 8192 );
+		assert( bWrite );
+		return true;
+	}
+
+	virtual bool DataReceived( void * pvData, unsigned nLen ){
+		//char buff[1024]={0};
+		//memcpy( buff, pvData, nLen );
+		//printf("[%s]\n", buff);
+		//fwrite( pvData, 1, nLen, stdout );
+		WriteData( pvData, nLen );
+		return true;
+	}
+};
+
 int _tmain(int argc, _TCHAR* argv[])
 {
 	if( !IocpBase::InitIocp() ){
@@ -55,12 +77,12 @@ int _tmain(int argc, _TCHAR* argv[])
 	}
 
 
-	const int MAX_CONNECTED_CLIENT = 11;		// 最多同时连接10个客户端
-	IocpSocket * clients[MAX_CONNECTED_CLIENT]={NULL};
+	const int MAX_CONNECTED_CLIENT = 1;		// 最多同时连接10个客户端
+	EchoClient * clients[MAX_CONNECTED_CLIENT]={NULL};
 	for( int i=0; i<MAX_CONNECTED_CLIENT; ++i ){
-		IocpClientSocket * pClient = new IocpClientSocket;
+		EchoClient * pClient = new EchoClient;
 		pClient->SetCompPort( hCompPort );
-		pClient->SetDestHostPort( "192.168.1.103", 27015 );
+		pClient->SetDestHostPort( "10.240.170.46", 27015 );
 		pClient->Connect( );
 		clients[i] = pClient;
 	}

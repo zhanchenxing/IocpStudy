@@ -1,5 +1,6 @@
-#include "IocpSocket.h"
+#include <assert.h>
 
+#include "IocpSocket.h"
 #include "IocpBase.h"
 
 IocpSocket::IocpSocket(void)
@@ -12,6 +13,7 @@ IocpSocket::IocpSocket(void)
 
 	m_oReadOverlapped.Zero( this );
 	m_oWriteOverlapped.Zero( this );
+	m_oAcceptOverlapped.Zero( this );
 
 	m_bWritting = false;
 }
@@ -25,6 +27,7 @@ void IocpSocket::CloseClient()
 {
 	m_oReadOverlapped.Zero( this );
 	m_oWriteOverlapped.Zero( this );
+	m_oAcceptOverlapped.Zero( this );
 
 	closesocket( m_nSocket );
 	m_nSocket = 0;
@@ -55,7 +58,7 @@ bool IocpSocket::ReadData()
 		}
 	}
 	else{
-		printf( "WSARecv sucessed directly with: [%s]! \n", m_szBuff );
+		//printf( "WSARecv sucessed directly with: [%s]! \n", m_szBuff );
 	}
 
 	return true;
@@ -86,6 +89,10 @@ bool IocpSocket::DoWriteData()
 			printf("WSASend failed with error: %u\n", dwLastError);
 			return false;
 		}
+		else
+		{
+			//printf("WSASend returned WSA_IO_PENDING %u\n", dwLastError);
+		}
 	}
 
 	m_bWritting = true;
@@ -108,6 +115,7 @@ bool IocpSocket::WriteData( void * pvData, unsigned nLen )
 
 bool IocpSocket::OnErrorHappened( )
 {
+	printf("----%p OnErrorHappened----\n", this);
 	CloseClient( );
 	if( !Connect( ) ){
 		return false;
@@ -150,12 +158,13 @@ bool IocpSocket::OnCompletionStatusFailed( DWORD dwBytesTransfered, u_long CompK
 
 		printf("OnCompletionStatusFailed: write failed with error: %u\n", dwLastError );
 
-		return OnErrorHappened();
+		//return OnErrorHappened();
+		return true;
 	}
 
 	else if( pIocpOverlapped->m_eAction == ACCEPT_ACTION  ) {
 		// should not be here
-		if( pIocpOverlapped != &m_oReadOverlapped ){
+		if( pIocpOverlapped != &m_oAcceptOverlapped ){
 			printf("fatal error: connect action with different IocpSocket\n");
 			return false;
 		}
@@ -163,6 +172,10 @@ bool IocpSocket::OnCompletionStatusFailed( DWORD dwBytesTransfered, u_long CompK
 		printf("OnCompletionStatusFailed: accept failed with error: %u\n", dwLastError );
 
 		return OnErrorHappened();
+	}
+	else {
+		printf("Fatal error: %p pIocpOverlapped->m_eAction == %d", pIocpOverlapped->m_eAction );
+		//assert(false);
 	}
 
 	return true;
@@ -204,7 +217,7 @@ bool IocpSocket::OnCompletionStatusOK( DWORD dwBytesTransfered, u_long CompKey, 
 			return false;
 		}
 
-		printf("received %u bytes: [%s]\n", m_oReadOverlapped.m_oOverlapped.InternalHigh, m_szBuff );
+		//printf("received %u bytes: [%s]\n", m_oReadOverlapped.m_oOverlapped.InternalHigh, m_szBuff );
 
 		if( m_oReadOverlapped.m_oOverlapped.InternalHigh == 0 ){
 			printf("Client closed!\n");
@@ -282,7 +295,7 @@ bool IocpSocket::OnCompletionStatusOK( DWORD dwBytesTransfered, u_long CompKey, 
 	return true;
 }
 
-/// act as echo server
+/// act as echo server default
 bool IocpServerSocket::DataReceived( void * pvData, unsigned nLen )
 {
 	return WriteData( pvData, nLen );
@@ -302,10 +315,10 @@ bool IocpServerSocket::Connect()
 		return false;
 	}
 
-	m_oReadOverlapped.m_eAction = ACCEPT_ACTION;
+	m_oAcceptOverlapped.m_eAction = ACCEPT_ACTION;
 	DWORD dwBytesReceived = 0;
 	BOOL bAccept = IocpBase::AcceptEx( m_nListenSocket, m_nSocket, m_szBuff, 0, 
-		sizeof(sockaddr_in)+16, sizeof(sockaddr_in)+16, &dwBytesReceived, &m_oReadOverlapped.m_oOverlapped );
+		sizeof(sockaddr_in)+16, sizeof(sockaddr_in)+16, &dwBytesReceived, &m_oAcceptOverlapped.m_oOverlapped );
 	if( !bAccept ){
 		DWORD dwLastError = GetLastError();
 		if( ERROR_IO_PENDING != dwLastError ) {
@@ -370,14 +383,6 @@ bool IocpClientSocket::Connect()
 
 static char buffer[]="123456789012345678901234567890123456789012345678901234567890";
 
-bool IocpClientSocket::OnConnectFailed()
-{
-	/// 重新尝试连接
-	printf("Connect failed. Trying to connect again...\n");
-	return OnErrorHappened();
-}
-
-
 void IocpClientSocket::SetDestHostPort( const char * szHost, unsigned short nPort )
 {
 	m_nPort = nPort;
@@ -386,7 +391,7 @@ void IocpClientSocket::SetDestHostPort( const char * szHost, unsigned short nPor
 
 bool IocpClientSocket::DataReceived( void * pvData, unsigned nLen )
 {
-	printf("DataReceived: %s\n", pvData );
+	//printf("DataReceived: %s\n", pvData );
 	return true;
 }
 
@@ -399,7 +404,7 @@ bool IocpClientSocket::OnConnect()
 bool IocpClientSocket::DataWritted()
 {
 	// return WriteData( buffer, sizeof(buffer)-1 );
-	m_oSendBuffer.AppendData( buffer, sizeof(buffer)-1 );
+	//m_oSendBuffer.AppendData( buffer, sizeof(buffer)-1 );
 	return true;
 };
 

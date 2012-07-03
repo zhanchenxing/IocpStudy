@@ -79,7 +79,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	printf("Listening on address: %s:%d\n", ip, port );
 
-	const int MAX_CONNECTED_CLIENT = 10;		// 最多同时连接10个客户端
+	const int MAX_CONNECTED_CLIENT = 10 ;		// 最多同时连接10个客户端
 	const DWORD dwReceivedDataLength = 0;
 
 	IocpSocket * clients[MAX_CONNECTED_CLIENT]={NULL};
@@ -89,7 +89,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		pClient->SetCompPort( hCompPort );
 		pClient->Connect( );
 
-		printf("%d Connecting with: %p\n", i, pClient);
+		//printf("%d Connecting with: %p\n", i, pClient);
 		clients[i] = pClient;
 	}
 

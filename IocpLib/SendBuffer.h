@@ -10,6 +10,11 @@ public:
 
 public:
 	void AppendData( void * pvData, unsigned nLen ){
+
+		// TODO: 这里应该有个最大长度，超过这个最大长度就打出日志，报警。
+		// 或者设置一个最大厂的。如果超过，就失败。
+		// 这里采用的是连续的空间，可能效率上不是太好。
+		// 所以一定要有最大长度的限制，否则就不可控了。
 		m_strBuffer.append( (const char*)pvData, nLen );
 	}
 
@@ -20,7 +25,8 @@ public:
 		m_strSending.clear();
 
 		// 需要发送的变成当前要发送的。
-		std::swap( m_strSending, m_strBuffer );
+		m_strSending.swap( m_strBuffer );
+		//std::swap( m_strSending, m_strBuffer );
 
 		nLen = m_strSending.size();
 		return (void*)m_strSending.data();
